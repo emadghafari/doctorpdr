@@ -1,0 +1,5 @@
+# original heavy source images — not needed for the live site
+images/originals/
+
+# local tooling
+.claude/
