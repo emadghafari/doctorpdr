@@ -37,23 +37,23 @@ section{padding:80px 0}
 .title-line{width:54px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--blue-light));margin:14px auto 18px}
 
 /* ===== Preloader ===== */
-#preloader{position:fixed;inset:0;z-index:3000;background:linear-gradient(160deg,#0f2444,#173e75);display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s}
-#preloader.hide{opacity:0;visibility:hidden}
-.pl-box{position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center}
-.pl-box img{width:150px;background:#fff;border-radius:20px;padding:16px 18px;box-shadow:0 14px 44px rgba(0,0,0,.35);animation:plPulse 2.2s ease-in-out infinite}
-.pl-ring{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:#8ab4dd;border-left-color:rgba(138,180,221,.3);animation:plSpin 1.3s linear infinite}
-.pl-ring2{inset:-18px;border-width:2px;border-top-color:#4180c5;border-left-color:rgba(65,128,197,.25);animation:plSpin 2.1s linear infinite reverse}
-@keyframes plSpin{to{transform:rotate(360deg)}}
-@keyframes plPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+#preloader{position:fixed;inset:0;z-index:3000;background:#fff;display:flex;align-items:center;justify-content:center;transition:transform .9s cubic-bezier(.76,0,.24,1);will-change:transform}
+#preloader.hide{transform:translateY(-100%)}
+.pl-box{display:flex;flex-direction:column;align-items:center;gap:30px}
+.pl-box img{width:min(300px,68vw);opacity:0;animation:plLogo 1.1s cubic-bezier(.22,1,.36,1) .2s forwards}
+.pl-bar{width:min(230px,52vw);height:2px;background:#e9eef5;border-radius:2px;overflow:hidden}
+.pl-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2563ab,#8ab4dd);animation:plFill 2s cubic-bezier(.65,0,.35,1) .4s forwards}
+@keyframes plLogo{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes plFill{to{width:100%}}
 
 /* ===== Hero entrance ===== */
 .hero-badge,.hero h1,.hero p,.hero-btns,.hero-stats{opacity:0}
-body.loaded .hero-badge{animation:fadeUp .7s ease .05s both}
-body.loaded .hero h1{animation:fadeUp .7s ease .2s both}
-body.loaded .hero p{animation:fadeUp .7s ease .35s both}
-body.loaded .hero-btns{animation:fadeUp .7s ease .5s both}
-body.loaded .hero-stats{animation:fadeUp .7s ease .65s both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+body.loaded .hero-badge{animation:fadeUp .9s cubic-bezier(.22,1,.36,1) .25s both}
+body.loaded .hero h1{animation:fadeUp .9s cubic-bezier(.22,1,.36,1) .45s both}
+body.loaded .hero p{animation:fadeUp .9s cubic-bezier(.22,1,.36,1) .65s both}
+body.loaded .hero-btns{animation:fadeUp .9s cubic-bezier(.22,1,.36,1) .85s both}
+body.loaded .hero-stats{animation:fadeUp .9s cubic-bezier(.22,1,.36,1) 1.05s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:translateY(0)}}
 
 /* ===== Header ===== */
 header{position:fixed;top:0;right:0;left:0;z-index:1000;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--border),0 4px 20px rgba(19,44,82,.05);transition:all .3s}
@@ -194,7 +194,7 @@ footer small{color:#7d90ab;display:block;margin-top:14px;border-top:1px solid rg
 .to-top.show{display:flex}
 
 /* ===== Reveal animation ===== */
-.reveal{opacity:0;transform:translateY(34px);transition:opacity .7s ease,transform .7s ease}
+.reveal{opacity:0;transform:translateY(42px);transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
 .services-grid .reveal:nth-child(3n+2),.gallery-grid .reveal:nth-child(3n+2){transition-delay:.1s}
 .services-grid .reveal:nth-child(3n+3),.gallery-grid .reveal:nth-child(3n+3){transition-delay:.2s}
@@ -240,9 +240,8 @@ footer small{color:#7d90ab;display:block;margin-top:14px;border-top:1px solid rg
 <!-- ===== Preloader ===== -->
 <div id="preloader">
   <div class="pl-box">
-    <div class="pl-ring"></div>
-    <div class="pl-ring pl-ring2"></div>
     <img src="images/logo.png" alt="דוקטור פי.די.אר">
+    <div class="pl-bar"><i></i></div>
   </div>
 </div>
 
@@ -503,15 +502,22 @@ footer small{color:#7d90ab;display:block;margin-top:14px;border-top:1px solid rg
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// preloader
+// preloader — hold until the logo animation and progress bar finish
 const preloader = document.getElementById('preloader');
+const plStart = performance.now();
+document.body.style.overflow = 'hidden';
 function hidePreloader() {
   if (preloader.classList.contains('hide')) return;
   preloader.classList.add('hide');
   document.body.classList.add('loaded');
+  document.body.style.overflow = '';
+  setTimeout(() => { preloader.style.display = 'none'; }, 1000);
 }
-window.addEventListener('load', () => setTimeout(hidePreloader, 900));
-setTimeout(hidePreloader, 3500); // fallback
+window.addEventListener('load', () => {
+  const wait = Math.max(500, 2600 - (performance.now() - plStart));
+  setTimeout(hidePreloader, wait);
+});
+setTimeout(hidePreloader, 6000); // fallback
 
 // animated counters
 const statObs = new IntersectionObserver(entries => {
