@@ -36,9 +36,30 @@ section{padding:80px 0}
 .section-sub{text-align:center;color:var(--text-soft);max-width:640px;margin:0 auto 48px;font-size:1.02rem}
 .title-line{width:54px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--blue-light));margin:14px auto 18px}
 
+/* ===== Preloader ===== */
+#preloader{position:fixed;inset:0;z-index:3000;background:linear-gradient(160deg,#0f2444,#173e75);display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s}
+#preloader.hide{opacity:0;visibility:hidden}
+.pl-box{position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center}
+.pl-box img{width:150px;background:#fff;border-radius:20px;padding:16px 18px;box-shadow:0 14px 44px rgba(0,0,0,.35);animation:plPulse 2.2s ease-in-out infinite}
+.pl-ring{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:#8ab4dd;border-left-color:rgba(138,180,221,.3);animation:plSpin 1.3s linear infinite}
+.pl-ring2{inset:-18px;border-width:2px;border-top-color:#4180c5;border-left-color:rgba(65,128,197,.25);animation:plSpin 2.1s linear infinite reverse}
+@keyframes plSpin{to{transform:rotate(360deg)}}
+@keyframes plPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* ===== Hero entrance ===== */
+.hero-badge,.hero h1,.hero p,.hero-btns,.hero-stats{opacity:0}
+body.loaded .hero-badge{animation:fadeUp .7s ease .05s both}
+body.loaded .hero h1{animation:fadeUp .7s ease .2s both}
+body.loaded .hero p{animation:fadeUp .7s ease .35s both}
+body.loaded .hero-btns{animation:fadeUp .7s ease .5s both}
+body.loaded .hero-stats{animation:fadeUp .7s ease .65s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+
 /* ===== Header ===== */
 header{position:fixed;top:0;right:0;left:0;z-index:1000;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--border),0 4px 20px rgba(19,44,82,.05);transition:all .3s}
-.nav{display:flex;align-items:center;justify-content:space-between;height:74px}
+.nav{display:flex;align-items:center;justify-content:space-between;height:74px;transition:height .3s}
+header.scrolled .nav{height:62px}
+header.scrolled{box-shadow:0 1px 0 var(--border),0 6px 22px rgba(19,44,82,.09)}
 .logo{display:flex;align-items:center;gap:10px}
 .logo img{height:52px;width:auto}
 .logo-text{font-weight:900;font-size:1.35rem;letter-spacing:.5px;color:var(--blue);white-space:nowrap}
@@ -122,7 +143,8 @@ header{position:fixed;top:0;right:0;left:0;z-index:1000;background:rgba(255,255,
 .gallery-item{cursor:zoom-in}
 .lightbox{position:fixed;inset:0;z-index:2000;background:rgba(14,30,54,.93);display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
 .lightbox.open{display:flex}
-.lightbox img{max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5);object-fit:contain}
+.lightbox img{max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5);object-fit:contain;animation:lbIn .3s ease}
+@keyframes lbIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
 .lightbox .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.15);border:none;color:#fff;width:44px;height:44px;border-radius:50%;font-size:1.4rem;cursor:pointer}
 
 /* ===== Contact ===== */
@@ -172,8 +194,17 @@ footer small{color:#7d90ab;display:block;margin-top:14px;border-top:1px solid rg
 .to-top.show{display:flex}
 
 /* ===== Reveal animation ===== */
-.reveal{opacity:0;transform:translateY(34px);transition:all .7s ease}
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
+.services-grid .reveal:nth-child(3n+2),.gallery-grid .reveal:nth-child(3n+2){transition-delay:.1s}
+.services-grid .reveal:nth-child(3n+3),.gallery-grid .reveal:nth-child(3n+3){transition-delay:.2s}
+.why-grid .reveal:nth-child(2){transition-delay:.08s}
+.why-grid .reveal:nth-child(3){transition-delay:.16s}
+.why-grid .reveal:nth-child(4){transition-delay:.24s}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .hero-badge,.hero h1,.hero p,.hero-btns,.hero-stats,.reveal{opacity:1;transform:none}
+}
 
 /* ===== Responsive ===== */
 @media(max-width:960px){
@@ -205,6 +236,15 @@ footer small{color:#7d90ab;display:block;margin-top:14px;border-top:1px solid rg
 </style>
 </head>
 <body>
+
+<!-- ===== Preloader ===== -->
+<div id="preloader">
+  <div class="pl-box">
+    <div class="pl-ring"></div>
+    <div class="pl-ring pl-ring2"></div>
+    <img src="images/logo.png" alt="דוקטור פי.די.אר">
+  </div>
+</div>
 
 <!-- ===== Header ===== -->
 <header>
@@ -462,6 +502,43 @@ footer small{color:#7d90ab;display:block;margin-top:14px;border-top:1px solid rg
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// preloader
+const preloader = document.getElementById('preloader');
+function hidePreloader() {
+  if (preloader.classList.contains('hide')) return;
+  preloader.classList.add('hide');
+  document.body.classList.add('loaded');
+}
+window.addEventListener('load', () => setTimeout(hidePreloader, 900));
+setTimeout(hidePreloader, 3500); // fallback
+
+// animated counters
+const statObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    statObs.unobserve(e.target);
+    const raw = e.target.textContent;
+    const num = parseInt(raw.replace(/\D/g, ''), 10);
+    const prefix = raw.includes('+') ? '+' : '';
+    const suffix = raw.includes('%') ? '%' : '';
+    const dur = 1400, t0 = performance.now();
+    const step = t => {
+      const p = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      e.target.textContent = prefix + Math.round(num * eased) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}, {threshold: .6});
+document.querySelectorAll('.stat b').forEach(el => statObs.observe(el));
+
+// header shrink on scroll
+const headerEl = document.querySelector('header');
+window.addEventListener('scroll', () => {
+  headerEl.classList.toggle('scrolled', window.scrollY > 60);
+});
 
 // burger menu
 const burger = document.getElementById('burger');
