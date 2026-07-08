@@ -204,10 +204,12 @@ footer small{color:#7d90ab;display:block;margin-top:14px;border-top:1px solid rg
 .why-grid .reveal:nth-child(2){transition-delay:.08s}
 .why-grid .reveal:nth-child(3){transition-delay:.16s}
 .why-grid .reveal:nth-child(4){transition-delay:.24s}
+/* Reduced motion: keep gentle opacity fades, drop movement, parallax & zoom */
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-  .hero-badge,.hero h1,.hero p,.hero-btns,.hero-stats,.reveal{opacity:1;transform:none}
-  .hero::after{transform:none}
+  .hero-badge,.hero h1,.hero p,.hero-btns,.hero-stats,
+  body.loaded .hero-badge,body.loaded .hero h1,body.loaded .hero p,body.loaded .hero-btns,body.loaded .hero-stats,
+  .reveal,.reveal.visible{transform:none}
+  .hero::after,body.loaded .hero::after{transform:none;transition:opacity .3s ease}
 }
 
 /* ===== Responsive ===== */
